@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const resumeService = require('../services/resumeService');
+const langchainService = require('../services/langchainService');
 
 // ========================================
 // MULTER CONFIGURATION
@@ -387,6 +388,83 @@ function performSkillMatching(resumeSkills, jobSkills, detailedSkills) {
         matchedSkills: matchingSkills.length
     };
 }
+
+/**
+ * POST /api/resume/parse-with-ai
+ * Parse resume using LangChain LLM (premium AI-powered feature)
+ */
+router.post('/parse-with-ai', upload.single('file'), async (req, res, next) => {
+  try {
+    // Validate file
+    validateFile(req.file);
+
+    const { buffer, mimetype, originalname } = req.file;
+
+    console.log('AI-powered parsing for:', {
+      filename: originalname,
+      mimetype: mimetype,
+      size: buffer.length
+    });
+    
+    // Step 1: OCR extraction (existing method)
+    const extractedText = await resumeService.performOCR(buffer, mimetype);
+    
+    if (!extractedText || extractedText.trim().length === 0) {
+      return res.status(400).json({ 
+        error: 'No text could be extracted from the file',
+        suggestion: 'Please ensure the file contains readable text' 
+      });
+    }
+
+    console.log('Text extracted, length:', extractedText.length);
+    console.log('Starting LLM-powered parsing...');
+    
+    // Step 2: LLM-powered intelligent parsing
+    const parsed = await langchainService.parseResumeWithLLM(extractedText);
+    
+    console.log('AI parsing complete:', {
+      skillsExtracted: parsed.data.skills?.length,
+      experienceCount: parsed.data.experience?.length,
+      projectCount: parsed.data.projects?.length
+    });
+    
+    res.json({
+      success: true,
+      ...parsed.data,
+      metadata: {
+        ...parsed.metadata,
+        processingMethod: 'AI-Enhanced (LangChain)',
+        originalTextLength: extractedText.length,
+        originalFilename: originalname,
+        fileSize: buffer.length,
+        processingTime: new Date().toISOString()
+      }
+    });
+
+  } catch (error) {
+    console.error('AI parsing error:', error);
+    
+    // Fallback to regular parsing if AI fails
+    try {
+      console.log('Falling back to regular parsing...');
+      const text = await resumeService.performOCR(req.file.buffer, req.file.mimetype);
+      const regularParsed = resumeService.parseResume(text);
+      
+      res.json({
+        success: true,
+        ...regularParsed,
+        metadata: {
+          processingMethod: 'Standard (Fallback)',
+          originalFilename: req.file.originalname,
+          warning: 'AI parsing failed, used standard method',
+          error: error.message
+        }
+      });
+    } catch (fallbackError) {
+      next(error); // Pass original error to error handler
+    }
+  }
+});
 
 // ========================================
 // ERROR HANDLING MIDDLEWARE

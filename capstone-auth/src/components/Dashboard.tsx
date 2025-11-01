@@ -5,19 +5,20 @@ import SkillGapAnalysis from './SkillGapAnalysis';
 import LearningRoadmap from './LearningRoadmap';
 import KnowledgeGraphDashboard from './KnowledgeGraphDashboard';
 import HelpTips from './HelpTips';
+import CareerAdvisorChatbot from './ui/CareerAdvisorChatbot';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-import { Badge } from './ui/badge';
 import { ResumeData, SkillGapAnalysis as SkillGapType, LearningRoadmap as RoadmapType, JobInfo } from '../types';
 // @ts-ignore
 import { extractJobSkills, analyzeSkillGap, generateLearningRoadmap } from '../services/aiService';
 // @ts-ignore
 import { CourseRecommendationService } from '../services/knowledgeGraph';
-import { RotateCcw, Printer, CheckCircle, Sparkles, Zap } from 'lucide-react';
+import { RotateCcw, Printer, CheckCircle, Sparkles } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [activeTab, setActiveTab] = useState<'analysis' | 'roadmap' | 'chatbot'>('analysis');
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [analysis, setAnalysis] = useState<SkillGapType | null>(null);
   const [roadmap, setRoadmap] = useState<RoadmapType | null>(null);
@@ -116,6 +117,7 @@ const Dashboard: React.FC = () => {
 
   const resetProcess = () => {
     setCurrentStep(1);
+    setActiveTab('analysis');
     setResumeData(null);
     setAnalysis(null);
     setRoadmap(null);
@@ -221,17 +223,81 @@ const Dashboard: React.FC = () => {
           
           {currentStep === 3 && (
             <div className="space-y-6 animate-fadeIn">
-              <SkillGapAnalysis analysis={analysis} loading={loading} />
-              <LearningRoadmap roadmap={roadmap} loading={loading} />
+              {/* Tabs */}
+              <Card className="shadow-lg border-2 backdrop-blur-sm bg-white/95 dark:bg-gray-900/95">
+                <CardContent className="pt-6">
+                  <div className="flex gap-4 mb-6 border-b border-gray-200">
+                    <button
+                      onClick={() => setActiveTab('analysis')}
+                      className={`px-4 py-2 font-medium transition-all duration-300 ${
+                        activeTab === 'analysis'
+                          ? 'border-b-2 border-blue-600 text-blue-600'
+                          : 'text-gray-600 hover:text-blue-500'
+                      }`}
+                    >
+                      📊 Skill Analysis
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('roadmap')}
+                      className={`px-4 py-2 font-medium transition-all duration-300 ${
+                        activeTab === 'roadmap'
+                          ? 'border-b-2 border-blue-600 text-blue-600'
+                          : 'text-gray-600 hover:text-blue-500'
+                      }`}
+                    >
+                      🗺️ Learning Roadmap
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('chatbot')}
+                      className={`px-4 py-2 font-medium transition-all duration-300 ${
+                        activeTab === 'chatbot'
+                          ? 'border-b-2 border-blue-600 text-blue-600'
+                          : 'text-gray-600 hover:text-blue-500'
+                      }`}
+                    >
+                      🤖 AI Career Advisor
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tab Content */}
+              {activeTab === 'analysis' && (
+                <>
+                  <SkillGapAnalysis analysis={analysis} loading={loading} />
+                </>
+              )}
               
-              {analysis && analysis.missingSkills && analysis.missingSkills.length > 0 && (
-                <div className="animate-slideUp" style={{ animationDelay: '0.2s' }}>
-                  <KnowledgeGraphDashboard 
-                    courseService={courseService}
-                    userSkills={resumeData?.skills || []}
-                    targetSkills={analysis.missingSkills || []}
-                  />
-                </div>
+              {activeTab === 'roadmap' && (
+                <>
+                  <LearningRoadmap roadmap={roadmap} loading={loading} />
+              
+                  {analysis && analysis.missingSkills && analysis.missingSkills.length > 0 && (
+                    <div className="animate-slideUp" style={{ animationDelay: '0.2s' }}>
+                      <KnowledgeGraphDashboard 
+                        courseService={courseService}
+                        userSkills={resumeData?.skills || []}
+                        targetSkills={analysis.missingSkills || []}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+
+              {activeTab === 'chatbot' && resumeData && jobInfo && (
+                <Card className="shadow-lg border-2 backdrop-blur-sm bg-white/95 dark:bg-gray-900/95">
+                  <CardContent className="pt-6">
+                    <CareerAdvisorChatbot
+                      userId={resumeData.email || 'demo-user'}
+                      context={{
+                        resumeText: JSON.stringify(resumeData),
+                        jobDescription: jobInfo.jobDescription,
+                        skillGapAnalysis: analysis,
+                        learningRoadmap: roadmap
+                      }}
+                    />
+                  </CardContent>
+                </Card>
               )}
               
               <Card className="shadow-lg border-2 backdrop-blur-sm bg-gradient-to-br from-white to-blue-50/50 dark:from-gray-900 dark:to-blue-950/30">

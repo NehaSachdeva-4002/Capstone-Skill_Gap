@@ -5,6 +5,7 @@ const router = express.Router();
 
 // Import resumeService which now contains all skill extraction logic
 const resumeService = require('../services/resumeService');
+const langchainService = require('../services/langchainService');
 
 // ========================================
 // SKILL EXTRACTION & MATCHING
@@ -670,6 +671,147 @@ function calculateReadinessScore(totalMissing, criticalMissing) {
     const score = Math.max(0, 100 - criticalPenalty - generalPenalty);
     return Math.round(score);
 }
+
+/**
+ * POST /api/skills/analyze-with-ai
+ * AI-powered comprehensive skill gap analysis using LangChain
+ */
+router.post('/analyze-with-ai', async (req, res) => {
+  try {
+    const { resumeText, jobDescription } = req.body;
+
+    // Validate inputs
+    if (!resumeText || typeof resumeText !== 'string') {
+      return res.status(400).json({ 
+        error: 'Resume text is required and must be a string' 
+      });
+    }
+
+    if (!jobDescription || typeof jobDescription !== 'string') {
+      return res.status(400).json({ 
+        error: 'Job description is required and must be a string' 
+      });
+    }
+
+    console.log('AI-powered analysis request:', {
+      resumeTextLength: resumeText.length,
+      jobDescriptionLength: jobDescription.length
+    });
+
+    // Parse both with LLM in parallel for efficiency
+    console.log('Parsing resume and job description with AI...');
+    const [resumeAnalysis, jdAnalysis] = await Promise.all([
+      langchainService.parseResumeWithLLM(resumeText),
+      langchainService.analyzeJobDescriptionWithLLM(jobDescription)
+    ]);
+
+    console.log('AI Parsing complete:', {
+      resumeSkills: resumeAnalysis.data.skills?.length,
+      jobRequirements: jdAnalysis.data.requiredSkills?.length
+    });
+
+    // Semantic skill matching with vector embeddings
+    console.log('Performing semantic skill matching...');
+    const matching = await langchainService.semanticSkillMatching(
+      resumeAnalysis.data.skills || [],
+      jdAnalysis.data.requiredSkills || []
+    );
+
+    console.log('Matching complete:', {
+      matched: matching.matches?.length,
+      missing: matching.missing?.length,
+      matchPercentage: matching.matchPercentage
+    });
+
+    // Generate personalized learning roadmap
+    console.log('Generating personalized learning roadmap...');
+    const roadmap = await langchainService.generatePersonalizedLearningPath(
+      matching.missing || [],
+      { 
+        skills: resumeAnalysis.data.skills || [],
+        experienceLevel: jdAnalysis.data.experienceLevel || 'intermediate',
+        targetRole: jdAnalysis.data.jobTitle || 'Target Position'
+      },
+      matching
+    );
+
+    console.log('AI Analysis Complete');
+
+    res.json({
+      success: true,
+      resumeAnalysis: resumeAnalysis.data,
+      jobAnalysis: jdAnalysis.data,
+      skillMatching: matching,
+      learningRoadmap: roadmap.roadmap,
+      metadata: {
+        processingMethod: 'LangChain AI',
+        model: 'llama3-70b-8192',
+        timestamp: new Date().toISOString(),
+        resumeMetadata: resumeAnalysis.metadata,
+        jobMetadata: jdAnalysis.metadata
+      }
+    });
+
+  } catch (error) {
+    console.error('AI analysis error:', error);
+    res.status(500).json({ 
+      error: 'Failed to perform AI analysis',
+      details: error.message 
+    });
+  }
+});
+
+/**
+ * POST /api/skills/career-coach
+ * Interactive AI career coach chatbot
+ */
+router.post('/career-coach', async (req, res) => {
+  try {
+    const { question, resumeText, roadmap } = req.body;
+
+    // Validate inputs
+    if (!question || typeof question !== 'string') {
+      return res.status(400).json({ 
+        error: 'Question is required and must be a string' 
+      });
+    }
+
+    if (!resumeText) {
+      return res.status(400).json({ 
+        error: 'Resume text is required for context' 
+      });
+    }
+
+    console.log('Career coach question:', question);
+
+    // Create chatbot instance (in production, cache this per user session)
+    const chatbot = await langchainService.createCareerCoachChatbot(
+      resumeText,
+      roadmap || {}
+    );
+    
+    // Get answer from AI coach
+    const answer = await langchainService.askCareerCoach(chatbot, question);
+
+    console.log('Career coach responded successfully');
+
+    res.json({
+      ...answer,
+      metadata: {
+        timestamp: new Date().toISOString(),
+        model: 'llama3-70b-8192',
+        processingMethod: 'RAG-based Q&A'
+      }
+    });
+
+  } catch (error) {
+    console.error('Career coach error:', error);
+    res.status(500).json({ 
+      error: 'Failed to get career coach response',
+      details: error.message 
+    });
+  }
+});
 
 // ========================================
 // HEALTH CHECK

@@ -8,10 +8,34 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?logo=typescript)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js)
 
+## ✨ What's New in Latest Update
+
+### 🎨 **Premium UI/UX Redesign**
+- Modern gradient themes with glassmorphism effects
+- Smooth 60fps animations and transitions
+- Interactive hover states and micro-interactions
+- Enhanced color-coded components
+- Beautiful loading states and progress indicators
+
+### 🚀 **Developer Experience**
+- **New**: Single command to run both servers: `npm run dev`
+- Color-coded terminal output for easier debugging
+- Auto-restart and error handling
+- Improved development workflow
+
+### 🤖 **AI Features**
+- Career Advisor Chatbot with LangChain RAG
+- Context-aware responses based on your resume and job description
+- Real-time streaming responses
+- Personalized career guidance
+
 ## 📋 Table of Contents
 
+- [What's New](#-whats-new-in-latest-update)
+- [Quick Start](#-quick-start-guide)
 - [Overview](#overview)
 - [Features](#features)
+- [UI/UX Design](#-uiux-design-system)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
@@ -22,6 +46,37 @@
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
+
+---
+
+## 🚀 Quick Start Guide
+
+### Installation & Setup (5 minutes)
+
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd capstone-auth
+
+# 2. Install all dependencies
+npm install
+cd backend && npm install && cd ..
+
+# 3. Run the application
+npm run dev
+```
+
+That's it! 🎉 Your app will be running at:
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:5000
+
+### First Time Usage
+
+1. **Sign Up** - Create an account or use OAuth (Google/GitHub)
+2. **Upload Resume** - Drop your resume PDF or image
+3. **Enter Job Description** - Paste the job posting you're interested in
+4. **View Results** - See your skill gaps and personalized learning roadmap
+5. **Start Learning** - Explore recommended courses and resources
 
 ---
 
@@ -84,6 +139,15 @@ The **Skill Gap Analysis & Learning Roadmap Platform** is a comprehensive full-s
 - 🛡️ Secure session management
 - 👤 User profile persistence
 
+#### 7. **Modern UI/UX Design**
+- 🎨 Beautiful gradient themes and glassmorphism effects
+- ✨ Smooth animations and transitions (60fps)
+- 🌈 Color-coded components for better visual hierarchy
+- 📱 Fully responsive design for all screen sizes
+- 🌙 Dark mode support throughout the app
+- 💫 Interactive hover states and micro-interactions
+- 🎯 Intuitive user flow with step-by-step progress tracking
+
 ---
 
 ## 🛠️ Tech Stack
@@ -91,7 +155,7 @@ The **Skill Gap Analysis & Learning Roadmap Platform** is a comprehensive full-s
 ### Frontend
 - **Framework**: React 18.2.0 with TypeScript
 - **UI Library**: Custom components with Radix UI primitives
-- **Styling**: Tailwind CSS 3.3.0 + PostCSS
+- **Styling**: Tailwind CSS 3.3.0 + PostCSS + Custom animations
 - **Routing**: React Router DOM 6.30.1
 - **HTTP Client**: Axios 1.12.2
 - **Icons**: Lucide React 0.546.0
@@ -99,6 +163,7 @@ The **Skill Gap Analysis & Learning Roadmap Platform** is a comprehensive full-s
   - D3.js 7.8.5 (Data visualization)
   - Cytoscape 3.26.0 (Graph visualization)
 - **Build Tool**: Create React App (react-scripts 5.0.1)
+- **Dev Tools**: Concurrently 9.2.1 (Multi-process runner)
 
 ### Backend
 - **Runtime**: Node.js with Express 4.18.2
@@ -196,6 +261,50 @@ backend/
 
 ---
 
+## 🌈 UI/UX Design System
+
+### Design Philosophy
+Our platform features a modern, premium design with:
+
+#### 🎨 **Visual Design**
+- **Gradient Themes**: Multi-color gradients (Purple, Pink, Blue, Cyan, Indigo)
+- **Glassmorphism**: Backdrop blur effects for depth and elegance
+- **Color Coding**: Intuitive color schemes for different skill categories
+  - 🟢 Green: Matched skills
+  - 🟠 Orange/Yellow: Skills to develop
+  - 🔵 Blue: Partial matches
+  - 🔴 Red: Critical missing skills
+
+#### ✨ **Animations & Interactions**
+- **Smooth Transitions**: All elements use GPU-accelerated CSS transforms
+- **Micro-interactions**: Hover effects, scale transforms, shadow elevations
+- **Loading States**: Beautiful animated loaders with gradient effects
+- **Progress Indicators**: Animated progress bars with embedded percentages
+- **Staggered Animations**: Sequential element appearances for better UX
+
+#### 📊 **Components**
+- **Cards**: Elevated design with borders, shadows, and hover effects
+- **Badges**: Gradient backgrounds with icons and semantic colors
+- **Buttons**: Multi-state with hover, active, and disabled styles
+- **Forms**: Enhanced inputs with character counters and validation
+- **Timeline**: Visual learning path with gradient markers
+- **Chatbot**: Modern messenger-style interface with streaming responses
+
+#### 🌙 **Accessibility**
+- Full dark mode support
+- Semantic HTML throughout
+- Keyboard navigation support
+- ARIA labels for screen readers
+- High contrast color schemes
+
+#### 📱 **Responsive Design**
+- Mobile-first approach
+- Breakpoints for all device sizes
+- Touch-friendly interactive elements
+- Optimized for tablets and desktops
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -246,20 +355,68 @@ backend/
    REACT_APP_API_BASE_URL=http://localhost:5000/api
    ```
 
+### Available Scripts
+
+In the project directory, you can run:
+
+#### 🚀 **`npm run dev`** (Recommended)
+Runs both backend and frontend servers concurrently.
+- Backend: `http://localhost:5000`
+- Frontend: `http://localhost:3000`
+- Color-coded terminal output
+- Auto-restart on file changes (backend)
+- Auto-kill on server failure
+
+#### 🟢 **`npm start`** or **`npm run start:frontend`**
+Runs the frontend in development mode.
+- Opens `http://localhost:3000` in browser
+- Hot reload enabled
+
+#### 🔵 **`npm run start:backend`**
+Runs only the backend server.
+- Starts Express server on port 5000
+- Useful for backend-only development
+
+#### 📦 **`npm run build`**
+Builds the frontend for production.
+- Optimized bundle in `build/` folder
+- Minified and ready for deployment
+
+#### 🧪 **`npm test`**
+Launches the test runner in interactive watch mode.
+
+---
+
 ### Running the Application
 
 #### Development Mode
 
+**🚀 Quick Start (Recommended)**
+
+Run both frontend and backend together with a single command:
+```bash
+npm run dev
+```
+
+This will:
+- Start the backend server on `http://localhost:5000`
+- Start the frontend development server on `http://localhost:3000`
+- Show color-coded logs (Blue for Backend, Magenta for Frontend)
+- Automatically stop both servers if one fails
+
+**Alternative: Run Servers Individually**
+
 1. **Start the Backend Server** (Terminal 1)
    ```bash
-   cd backend
-   npm start
+   npm run start:backend
+   # Or: cd backend && npm start
    ```
    Backend will run on `http://localhost:5000`
 
 2. **Start the Frontend Development Server** (Terminal 2)
    ```bash
-   npm start
+   npm run start:frontend
+   # Or: npm start
    ```
    Frontend will run on `http://localhost:3000`
 
@@ -562,8 +719,9 @@ Choose one of three authentication methods:
 **Solution**:
 ```bash
 # Make sure backend is running
-cd backend
-npm start
+npm run dev  # Runs both servers
+# Or run backend only
+npm run start:backend
 ```
 
 #### 2. CORS Errors
@@ -779,13 +937,16 @@ For support, email: nehasachdeva4002@gmail.com
 - ✅ Firebase authentication
 
 ### Upcoming Features
+- 🤖 AI Career Advisor Chatbot (RAG-powered with LangChain)
 - 🔄 Real-time collaboration
 - 📱 Mobile app
-- 🤖 Advanced AI recommendations
-- 📊 Progress tracking dashboard
-- 🎓 Certification tracking
-- 💼 Job application tracking
-- 🔔 Skill trend notifications
+- 🧠 Advanced AI recommendations with context awareness
+- 📊 Enhanced progress tracking dashboard
+- 🎓 Certification tracking and verification
+- 💼 Job application tracking and management
+- 🔔 Skill trend notifications and market insights
+- 📈 Industry-specific skill analysis
+- 🎯 Personalized career path suggestions
 
 ---
 
