@@ -32,7 +32,7 @@ const CareerAdvisorChatbot: React.FC<ChatbotProps> = ({ userId, context }) => {
   const [error, setError] = useState<string | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://capstone-backend-env.eba-enkzsfa3.us-east-1.elasticbeanstalk.com/api';
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
