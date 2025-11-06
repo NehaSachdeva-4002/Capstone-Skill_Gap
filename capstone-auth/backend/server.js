@@ -9,7 +9,7 @@ const ocrRoutes = require('./routes/ocrRoutes');
 const chatbotRoutes = require('./routes/chatbotRoutes');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8081;
 
 // Middleware
 app.use(cors({
