@@ -34,4 +34,4 @@ yarn-error.log*
 Thumbs.db
 
 # Firebase config (optional - uncomment if you want to exclude firebase config)
-# src/firebase.js
+src/firebase.js

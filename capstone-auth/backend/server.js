@@ -12,7 +12,10 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://capstone-frontend-skill-gap.s3-website-us-east-1.amazonaws.com'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -29,9 +32,7 @@ app.get('/api/health-check', (req, res) => {
 });
 
 // Basic route for testing
-app.get('/', (req, res) => {
-    res.send('Skill Gap Analysis Backend Server is running!');
-});
+app.get('/', (req, res) => res.send('Backend running!'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
